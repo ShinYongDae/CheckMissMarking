@@ -1,0 +1,12 @@
+Debug/
+ipch/
+x64/
+CheckMissMarking.sdf
+CheckMissMarking.VC.db
+CheckMissMarking/Debug/
+CheckMissMarking/Release/
+CheckMissMarking/x64/
+.vs/
+CheckMissMarking/CheckMissMarking.aps
+
+
