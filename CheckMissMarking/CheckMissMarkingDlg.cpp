@@ -24,6 +24,15 @@ CCheckMissMarkingDlg::CCheckMissMarkingDlg(CWnd* pParent /*=NULL*/)
 	m_dPixelRes = 0.008;
 }
 
+CCheckMissMarkingDlg::~CCheckMissMarkingDlg()
+{
+	if (m_pVision)
+	{
+		delete m_pVision;
+		m_pVision = NULL;
+	}
+}
+
 void CCheckMissMarkingDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -198,15 +207,75 @@ void CCheckMissMarkingDlg::DoHistogram()
 	{
 		m_pVision->DoHistogram();
 
-		for (int i = 0; i < 256; i++)
+		int nSumRng = 0, nSumPixels = 0;
+		int nTotalPixels = 100 * 100;
+		int nPeakVal[256] = { 0 };
+		int nPeakColorVal[256] = { 0 };
+		int nTotPeakVal = 0, nGrateVal = 0;
+		BOOL bInc = FALSE;
+		int i;
+
+		for (i = 0; i < 256; i++) // Gray color value : 0(black) ~ 255(white)
 		{
 			nHistoVal = m_pVision->m_nHistoRst[i];
 			if (nHistoVal > 0)
 			{
 				sTemp.Format(_T("%d(%d) "), i + 1, nHistoVal < 0 ? 0 : nHistoVal);
 				sVal += sTemp;
+
+				//nSumPixels += nHistoVal;
+				//nSumRng += i * nHistoVal;
+			}
+
+			if (nHistoVal > nGrateVal)
+			{
+				nGrateVal = nHistoVal;
+				bInc = TRUE;
+			}
+			if((nHistoVal < nGrateVal && bInc) || (i == 255 && bInc))
+			{
+				nPeakVal[nTotPeakVal] = nGrateVal;
+				nPeakColorVal[nTotPeakVal] = i;
+				nTotPeakVal++;
+				bInc = FALSE;
+				nGrateVal = nHistoVal;
 			}
 		}
 		GetDlgItem(IDC_EDIT_HISTO_RST)->SetWindowTextW(sVal);
+
+		//int nMid = nSumRng / nSumPixels;
+		//sTemp.Format(_T("%d"), nMid);
+
+		int nMaxPeak[2] = { 0 };
+		int nMaxPeakColorVal[2] = { 0 };
+		if (nTotPeakVal > 1)
+		{
+			for (i = 0; i < nTotPeakVal; i++)
+			{
+				if (nMaxPeak[0] < nPeakVal[i])
+				{
+					nMaxPeak[0] = nPeakVal[i];		// First grate value
+					nMaxPeakColorVal[0] = nPeakColorVal[i];
+				}
+
+				if (nMaxPeak[1] < nMaxPeak[0] && nMaxPeak[1] < nPeakVal[i] && nMaxPeak[1] == 0)
+				{
+					nMaxPeak[1] = nPeakVal[i];		// Second grate value
+					nMaxPeakColorVal[1] = nPeakColorVal[i];
+				}
+				else if (nMaxPeak[1] < nMaxPeak[0] && nMaxPeak[1] < nPeakVal[i] && nPeakVal[i] < nMaxPeak[0])
+				{
+					nMaxPeak[1] = nPeakVal[i];		// Second grate value
+					nMaxPeakColorVal[1] = nPeakColorVal[i];
+				}
+			}
+		}
+		else
+			sTemp = _T("0");
+
+		int nMid = int((nMaxPeakColorVal[0] + nMaxPeakColorVal[1]) / 2);
+		//int nMid = int((nPeakColorVal[0] + nPeakColorVal[1]) / 2);
+		sTemp.Format(_T("%d"), nMid);
+		GetDlgItem(IDC_STC_VAL_MID)->SetWindowTextW(sTemp);
 	}
 }

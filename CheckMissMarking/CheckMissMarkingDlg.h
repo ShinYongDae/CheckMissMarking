@@ -19,6 +19,7 @@ class CCheckMissMarkingDlg : public CDialog
 // 생성입니다.
 public:
 	CCheckMissMarkingDlg(CWnd* pParent = NULL);	// 표준 생성자입니다.
+	~CCheckMissMarkingDlg();
 
 	double m_dPixelRes; // Camera Pixel Resolution
 
