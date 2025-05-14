@@ -85,9 +85,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Program Files\Matrox Imaging\MIL\Include;C:\Program Files\Matrox Imaging\MIL\Include\MILDyn;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Matrox Imaging\MIL\LIB;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Program Files\Matrox Imaging\MIL\Include;C:\Program Files\Matrox Imaging\MIL\Include\MILDyn;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Matrox Imaging\MIL\LIB;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
